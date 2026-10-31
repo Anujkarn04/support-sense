@@ -1,0 +1,163 @@
+@import "@fontsource-variable/bricolage-grotesque/index.css";
+@import "@fontsource-variable/public-sans/index.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* Tokens. Colour is reserved for risk and chart series; everything    */
+/* else is ink on paper. Risk uses the status palette; series use the  */
+/* validated categorical slots (blue, orange, aqua).                   */
+/* ------------------------------------------------------------------ */
+:root {
+  color-scheme: light;
+  --paper: #f2f4f6;
+  --surface: #ffffff;
+  --sunken: #e8ecf0;
+  --ink: #16212c;
+  --muted: #566574;
+  --faint: #8794a1;
+  --line: #d8dfe5;
+  --action: #16212c;
+  --action-ink: #f2f4f6;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --risk-low: #0ca30c;
+  --risk-medium: #fab219;
+  --risk-high: #ec835a;
+  --risk-critical: #d03b3b;
+  --focus: #2a78d6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:where(:not([data-theme="light"])) {
+    color-scheme: dark;
+    --paper: #12171c;
+    --surface: #1a1a19;
+    --sunken: #232a31;
+    --ink: #eceff2;
+    --muted: #a6b2bd;
+    --faint: #7b8793;
+    --line: #2f3841;
+    --action: #eceff2;
+    --action-ink: #12171c;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --focus: #6da7ec;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #12171c;
+  --surface: #1a1a19;
+  --sunken: #232a31;
+  --ink: #eceff2;
+  --muted: #a6b2bd;
+  --faint: #7b8793;
+  --line: #2f3841;
+  --action: #eceff2;
+  --action-ink: #12171c;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --focus: #6da7ec;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Public Sans Variable", system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Bricolage Grotesque Variable", system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-panel px-3.5 py-2 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-primary {
+    background: var(--action);
+    color: var(--action-ink);
+  }
+  .btn-primary:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+  .btn-quiet {
+    @apply border border-line text-ink;
+    background: var(--surface);
+  }
+  .btn-quiet:hover:not(:disabled) {
+    background: var(--sunken);
+  }
+  .field {
+    @apply w-full rounded-panel border border-line px-3 py-2 text-sm text-ink placeholder:text-faint;
+    background: var(--surface);
+  }
+  .field:focus {
+    outline: 2px solid var(--focus);
+    outline-offset: 0;
+  }
+  .panel {
+    @apply rounded-panel border border-line;
+    background: var(--surface);
+  }
+  .table-row {
+    @apply border-t border-line;
+  }
+}
+
+/* Motion: only the single risk-arrival pulse, and it respects reduced motion. */
+@keyframes arrive {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--risk-critical) 45%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+.arrive {
+  animation: arrive 1.4s ease-out 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .arrive {
+    animation: none;
+  }
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+
+/* Recharts: quiet axes and grid */
+.recharts-cartesian-axis-tick-value {
+  fill: var(--muted);
+  font-size: 12px;
+}
+.recharts-cartesian-grid line {
+  stroke: var(--line);
+}
